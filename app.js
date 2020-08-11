@@ -8,12 +8,16 @@ const { mongoose } = require("./db/mongoose");
 const bodyParser = require("body-parser");
 
 const { User } = require("./db/models/user.model");
+const { Post } = require("./db/models/post.model");
+
+const postsRoutes = require("./routes/posts");
 
 const jwt = require("jsonwebtoken");
 
 /* MIDDLEWARE  */
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // CORS HEADERS MIDDLEWARE
 app.use(function (req, res, next) {
@@ -190,6 +194,10 @@ app.get("/users/me/access-token", verifySession, (req, res) => {
       res.status(400).send(e);
     });
 });
+
+app.use("/api/posts", postsRoutes);
+
+module.exports = app;
 
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
