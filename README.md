@@ -26,3 +26,4 @@ npm start
 *Dodajte svoj git account* 
 
 [Šabović Dženana](https://github.com/dsabovic1), 
+[Anida Mujezin](https://github.com/anida21),
