@@ -11,6 +11,7 @@ const { Post } = require("./db/models/post.model");
 
 const usersRoutes = require("./routes/users");
 const postsRoutes = require("./routes/posts");
+const path = require("path");
 
 const jwt = require("jsonwebtoken");
 
@@ -18,6 +19,7 @@ const jwt = require("jsonwebtoken");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/images", express.static(path.join("backend/images")));
 
 // CORS HEADERS MIDDLEWARE
 app.use(function (req, res, next) {
@@ -47,5 +49,5 @@ app.use("/api/posts", postsRoutes);
 module.exports = app;
 
 app.listen(3000, () => {
-  console.log("Server is listening on port 4000");
+  console.log("Server is listening on port 3000");
 });
