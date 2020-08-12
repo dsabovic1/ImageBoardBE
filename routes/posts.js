@@ -7,6 +7,7 @@ const MIME_TYPE_MAP = {
   "image/jpeg": "jpeg",
   "image/jpg": "jpg",
 };
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const isValid = MIME_TYPE_MAP[file.mimetype];
@@ -22,8 +23,7 @@ const storage = multer.diskStorage({
     cb(null, name + "-" + Date.now() + "." + ext);
   },
 });
-router.post(
-  "",
+router.post("",
   multer({ storage: storage }).single("image"),
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
@@ -35,7 +35,12 @@ router.post(
     post.save().then((result) => {
       res.status(201).json({
         message: "Post added succesfully!",
-        postId: result._id,
+        post: {
+          id: result._id,
+          title: result.title,
+          content: result.content,
+          imagePath: result.imagePath
+        }
       });
     });
   }
