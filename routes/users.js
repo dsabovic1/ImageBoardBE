@@ -78,7 +78,6 @@ let verifySession = (req, res, next) => {
  */
 usersRouter.post("", (req, res) => {
   // User sign up
-
   let body = req.body;
   let newUser = new User(body);
 
