@@ -23,8 +23,8 @@ npm start
 ```
 
 ### Credits
-*Dodajte svoj git account* 
 
-[Šabović Dženana](https://github.com/dsabovic1), 
-[Anida Mujezin](https://github.com/anida21),
-[Eldar Čelik](https://github.com/eldarcelik),
+
+- [Šabović Dženana](https://github.com/dsabovic1), 
+- [Anida Mujezin](https://github.com/anida21),
+- [Eldar Čelik](https://github.com/eldarcelik),
