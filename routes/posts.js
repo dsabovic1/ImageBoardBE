@@ -41,14 +41,15 @@ const storage = multer.diskStorage({
     cb(null, name + "-" + Date.now() + "." + ext);
   },
 });
+
 router.post(
   "",
   [multer({ storage: storage }).single("image"), authenticate],
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
     const post = new Post({
-      userId: "5",
       content: req.body.content,
+      username: req.body.username,
       likesCount: 0,
       liked: [],
       comments: [],
@@ -61,7 +62,8 @@ router.post(
         message: "Post added succesfully!",
         post: {
           id: result._id,
-          userId: result.id,
+          userId: result._userId,
+          username: result.username,
           content: result.content,
           likesCount: 0,
           liked: [],
