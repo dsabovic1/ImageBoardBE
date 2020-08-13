@@ -80,6 +80,7 @@ usersRouter.post("", (req, res) => {
   // User sign up
 
   let body = req.body;
+  console.log(req.body);
   let newUser = new User(body);
 
   newUser
@@ -104,6 +105,7 @@ usersRouter.post("", (req, res) => {
         .send(newUser);
     })
     .catch((e) => {
+      console.log(e);
       res.status(400).send(e);
     });
 });
