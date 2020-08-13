@@ -2,11 +2,28 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const Post = require("../db/models/post.model");
+const jwt = require("jsonwebtoken");
 
 const MIME_TYPE_MAP = {
   "image/png": "png",
   "image/jpeg": "jpeg",
   "image/jpg": "jpg",
+};
+
+const { User } = require("../db/models/user.model");
+
+// check whether the request has a valid JWT access token
+let authenticate = (req, res, next) => {
+  let token = req.header("x-access-token");
+
+  jwt.verify(token, User.getJWTSecret(), (err, decoded) => {
+    if (err) {
+      res.status(401).send(err);
+    } else {
+      req.user_id = decoded._id;
+      next();
+    }
+  });
 };
 
 const storage = multer.diskStorage({
@@ -26,7 +43,7 @@ const storage = multer.diskStorage({
 });
 router.post(
   "",
-  multer({ storage: storage }).single("image"),
+  [multer({ storage: storage }).single("image"), authenticate],
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
     const post = new Post({
@@ -56,7 +73,7 @@ router.post(
   }
 );
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", authenticate, (req, res, next) => {
   const post = new Post({
     _id: req.body.id,
     title: req.body.title,
@@ -156,11 +173,10 @@ router.post("/nesto", (req, res, next) => {
   });
 });
 
-router.get("/user/:id", (req, res, next) => {
+router.get("/user/:id", authenticate, (req, res, next) => {
   Post.findByUserId(req.params.id).then((posts) => {
     if (posts) {
       res.status(200).json({
-        message: "Posts updated succesfully!",
         posts: posts,
       });
     } else {
@@ -171,7 +187,7 @@ router.get("/user/:id", (req, res, next) => {
   });
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", authenticate, (req, res, next) => {
   console.log(req.params.id);
   Post.deleteOne({ _id: req.params.id }).then((result) => {
     console.log(result);
