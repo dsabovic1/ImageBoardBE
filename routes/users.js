@@ -141,7 +141,7 @@ usersRouter.post("/login", (req, res) => {
       res.status(400).send(e);
       
     });
-    console.log("poslo po zlu")
+    
 });
 
 /**
