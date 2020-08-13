@@ -48,7 +48,6 @@ router.post(
     const url = req.protocol + "://" + req.get("host");
     const post = new Post({
       userId: "5",
-      title: req.body.title,
       content: req.body.content,
       likesCount: 0,
       liked: [],
@@ -62,7 +61,6 @@ router.post(
         post: {
           id: result._id,
           userId: result.id,
-          title: result.title,
           content: result.content,
           likesCount: 0,
           liked: [],
@@ -76,7 +74,6 @@ router.post(
 router.put("/:id", authenticate, (req, res, next) => {
   const post = new Post({
     _id: req.body.id,
-    title: req.body.title,
     content: req.body.content,
   });
   Post.updateOne({ _id: req.params.id }, post).then((result) => {
@@ -161,9 +158,6 @@ router.post("/like", (req, res, next) => {
 
 router.post("/nesto", (req, res, next) => {
   Post.updateOne(
-    // find record with name "MyServer"
-    { title: "arslan" },
-    // increment it's property called "ran" by 1
     { $inc: { likesCount: 1 } }
   ).then((documents) => {
     res.status(200).json({
