@@ -157,9 +157,12 @@ router.post("/nesto", (req, res, next) => {
 });
 
 router.get("/user/:id", (req, res, next) => {
-  Post.findByUserId(req.params.id).then((post) => {
-    if (post) {
-      res.status(200).json(post);
+  Post.findByUserId(req.params.id).then((posts) => {
+    if (posts) {
+      res.status(200).json({
+        message: "Posts updated succesfully!",
+        posts: posts,
+      });
     } else {
       res.status(404).json({
         message: "Post not found!",

@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
 const postSchema = mongoose.Schema({
-  userId : {
-    type: String
-  },
   title: {
     type: String,
     required: true,
@@ -11,11 +8,12 @@ const postSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  likesCount : Number,
-  liked : [Number],
+  likesCount: Number,
+  liked: [Object],
   imagePath: { type: String, required: true },
   _userId: {
     type: mongoose.Types.ObjectId,
+    required: true,
   },
 });
 
