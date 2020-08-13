@@ -19,7 +19,6 @@ const postSchema = mongoose.Schema({
 
 /* STATIC METHODS */
 postSchema.statics.findByUserId = function (_userId) {
-  console.log(_userId);
   const Post = this;
 
   return Post.find({
