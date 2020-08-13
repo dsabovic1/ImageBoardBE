@@ -4,19 +4,6 @@ const usersRouter = express.Router();
 const { User } = require("../db/models/user.model");
 
 /* MIDDLEWARE */
-// check whether the request has a valid JWT access token
-let authenticate = (req, res, next) => {
-  let token = req.header("x-access-token");
-
-  jwt.verify(token, User.getJWTSecret(), (err, decoded) => {
-    if (err) {
-      res.status(401).send(err);
-    } else {
-      req.user_id = decoded._id;
-      next();
-    }
-  });
-};
 
 // Verify Refresh Token Middleware (which will be verifying the session)
 let verifySession = (req, res, next) => {
@@ -104,6 +91,7 @@ usersRouter.post("", (req, res) => {
         .send(newUser);
     })
     .catch((e) => {
+      console.log(e);
       res.status(400).send(e);
     });
 });

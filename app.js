@@ -13,8 +13,6 @@ const usersRoutes = require("./routes/users");
 const postsRoutes = require("./routes/posts");
 const path = require("path");
 
-const jwt = require("jsonwebtoken");
-
 /* MIDDLEWARE  */
 
 app.use(bodyParser.json());

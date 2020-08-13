@@ -1,19 +1,26 @@
 const mongoose = require("mongoose");
 const postSchema = mongoose.Schema({
-  userId : {
-    type: String
-  },
-  title: {
-    type: String,
-    required: true,
-  },
+  
   content: {
     type: String,
     required: true,
   },
-  likesCount : Number,
-  liked : [Number],
+  likesCount: Number,
+  liked: [Object],
   imagePath: { type: String, required: true },
+  _userId: {
+    type: mongoose.Types.ObjectId,
+    required: true,
+  },
 });
+
+/* STATIC METHODS */
+postSchema.statics.findByUserId = function (_userId) {
+  const Post = this;
+
+  return Post.find({
+    _userId,
+  });
+};
 
 module.exports = mongoose.model("Post", postSchema);
