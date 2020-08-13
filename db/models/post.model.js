@@ -12,7 +12,11 @@ const postSchema = mongoose.Schema({
     required: true,
   },
   likesCount : Number,
-  liked : [Number],
+  liked : [String],
+  comments : [{
+    username: String,
+    text: String
+  }],
   imagePath: { type: String, required: true },
 });
 

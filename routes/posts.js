@@ -35,6 +35,7 @@ router.post("",
       content: req.body.content,
       likesCount: 0,
       liked: [],
+      comments: [],
       imagePath: url + "/images/" + req.file.filename,
     });
     post.save().then((result) => {
@@ -47,6 +48,7 @@ router.post("",
           content: result.content,
           likesCount: 0,
           liked: [],
+          comments: [],
           imagePath: result.imagePath
         }
       });
@@ -111,7 +113,7 @@ router.post("/like", (req, res, next) => {
           }
         ).then((doc) => {
           res.status(200).json({
-            message: "Likes updated succesfully!",
+            message: "Like added succesfully!",
             posts: doc,
             newLikeCount: documents[0].likesCount + 1,
             postId: documents[0]._id
@@ -128,7 +130,7 @@ router.post("/like", (req, res, next) => {
           }
         ).then((doc) => {
           res.status(200).json({
-            message: "Likes updated succesfully!",
+            message: "Like deleted succesfully!",
             posts: doc,
             newLikeCount : documents[0].likesCount - 1,
             postId: documents[0]._id
@@ -138,16 +140,20 @@ router.post("/like", (req, res, next) => {
     });
 });
 
-router.post("/nesto", (req, res, next) => {
+router.post("/addComment", (req, res, next) => {
   Post.updateOne(
-    // find record with name "MyServer"
-    { title: "arslan" },
-    // increment it's property called "ran" by 1
-    { $inc: { likesCount: 1 } }
+    { 
+      "_id": req.body.postId
+    },
+    {
+      "$push": { "comments": {"username": req.body.username, "text" : req.body.text} }
+    }
   ).then((documents) => {
     res.status(200).json({
-      message: "Posts updated succesfully!",
-      post: documents,
+      message: "Comment added succesfully!",
+      postId : req.body.postId,
+      username : req.body.username,
+      text : req.body.text
     });
   });
 });
