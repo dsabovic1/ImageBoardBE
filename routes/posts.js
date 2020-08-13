@@ -24,31 +24,33 @@ const storage = multer.diskStorage({
     cb(null, name + "-" + Date.now() + "." + ext);
   },
 });
-
-router.post("",
+router.post(
+  "",
   multer({ storage: storage }).single("image"),
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
     const post = new Post({
-      userId : "5",
+      userId: "5",
       title: req.body.title,
       content: req.body.content,
       likesCount: 0,
       liked: [],
       imagePath: url + "/images/" + req.file.filename,
+      _userId: req.body._userId,
     });
+    console.log(post);
     post.save().then((result) => {
       res.status(201).json({
         message: "Post added succesfully!",
         post: {
           id: result._id,
-          userId : result.id,
+          userId: result.id,
           title: result.title,
           content: result.content,
           likesCount: 0,
           liked: [],
-          imagePath: result.imagePath
-        }
+          imagePath: result.imagePath,
+        },
       });
     });
   }
@@ -90,52 +92,54 @@ router.get("", (req, res, next) => {
 
 router.post("/like", (req, res, next) => {
   console.log(req.body);
-  Post.find({
-    "_id": req.body.postId
+  Post.find(
+    {
+      _id: req.body.postId,
     },
     {
-      "likesCount": 1,
-      "liked": {
-        "$elemMatch": { "$eq": req.body.userId }
-      }
-    }).then((documents) => {
-      console.log(documents);
-      if(documents[0].liked.length == 0) {
-        Post.updateOne(
-          { 
-              "_id": req.body.postId
-          },
-          {
-              "$inc": { "likesCount": 1 },
-              "$push": { "liked": req.body.userId }
-          }
-        ).then((doc) => {
-          res.status(200).json({
-            message: "Likes updated succesfully!",
-            posts: doc,
-            newLikeCount: documents[0].likesCount + 1,
-            postId: documents[0]._id
-          });
+      likesCount: 1,
+      liked: {
+        $elemMatch: { $eq: req.body.userId },
+      },
+    }
+  ).then((documents) => {
+    console.log(documents);
+    if (documents[0].liked.length == 0) {
+      Post.updateOne(
+        {
+          _id: req.body.postId,
+        },
+        {
+          $inc: { likesCount: 1 },
+          $push: { liked: req.body.userId },
+        }
+      ).then((doc) => {
+        res.status(200).json({
+          message: "Likes updated succesfully!",
+          posts: doc,
+          newLikeCount: documents[0].likesCount + 1,
+          postId: documents[0]._id,
         });
-      } else {
-        Post.updateOne(
-          { 
-              "_id": req.body.postId
-          },
-          {
-              "$inc": { "likesCount": -1 },
-              "$pull": { "liked": req.body.userId }
-          }
-        ).then((doc) => {
-          res.status(200).json({
-            message: "Likes updated succesfully!",
-            posts: doc,
-            newLikeCount : documents[0].likesCount - 1,
-            postId: documents[0]._id
-          });
+      });
+    } else {
+      Post.updateOne(
+        {
+          _id: req.body.postId,
+        },
+        {
+          $inc: { likesCount: -1 },
+          $pull: { liked: req.body.userId },
+        }
+      ).then((doc) => {
+        res.status(200).json({
+          message: "Likes updated succesfully!",
+          posts: doc,
+          newLikeCount: documents[0].likesCount - 1,
+          postId: documents[0]._id,
         });
-      }
-    });
+      });
+    }
+  });
 });
 
 router.post("/nesto", (req, res, next) => {
@@ -149,6 +153,18 @@ router.post("/nesto", (req, res, next) => {
       message: "Posts updated succesfully!",
       post: documents,
     });
+  });
+});
+
+router.get("/user/:id", (req, res, next) => {
+  Post.findByUserId(req.params.id).then((post) => {
+    if (post) {
+      res.status(200).json(post);
+    } else {
+      res.status(404).json({
+        message: "Post not found!",
+      });
+    }
   });
 });
 
