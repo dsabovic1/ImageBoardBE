@@ -41,16 +41,18 @@ const storage = multer.diskStorage({
     cb(null, name + "-" + Date.now() + "." + ext);
   },
 });
+
 router.post(
   "",
   [multer({ storage: storage }).single("image"), authenticate],
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
     const post = new Post({
-      userId: "5",
       content: req.body.content,
+      username: req.body.username,
       likesCount: 0,
       liked: [],
+      comments: [],
       imagePath: url + "/images/" + req.file.filename,
       _userId: req.body._userId,
     });
@@ -60,10 +62,12 @@ router.post(
         message: "Post added succesfully!",
         post: {
           id: result._id,
-          userId: result.id,
+          userId: result._userId,
+          username: result.username,
           content: result.content,
           likesCount: 0,
           liked: [],
+          comments: [],
           imagePath: result.imagePath,
         },
       });
@@ -129,7 +133,7 @@ router.post("/like", (req, res, next) => {
         }
       ).then((doc) => {
         res.status(200).json({
-          message: "Likes updated succesfully!",
+          message: "Like added succesfully!",
           posts: doc,
           newLikeCount: documents[0].likesCount + 1,
           postId: documents[0]._id,
@@ -146,7 +150,7 @@ router.post("/like", (req, res, next) => {
         }
       ).then((doc) => {
         res.status(200).json({
-          message: "Likes updated succesfully!",
+          message: "Like deleted succesfully!",
           posts: doc,
           newLikeCount: documents[0].likesCount - 1,
           postId: documents[0]._id,
@@ -156,13 +160,20 @@ router.post("/like", (req, res, next) => {
   });
 });
 
-router.post("/nesto", (req, res, next) => {
+router.post("/addComment", (req, res, next) => {
   Post.updateOne(
-    { $inc: { likesCount: 1 } }
+    {
+      _id: req.body.postId,
+    },
+    {
+      $push: { comments: { username: req.body.username, text: req.body.text } },
+    }
   ).then((documents) => {
     res.status(200).json({
-      message: "Posts updated succesfully!",
-      post: documents,
+      message: "Comment added succesfully!",
+      postId: req.body.postId,
+      username: req.body.username,
+      text: req.body.text,
     });
   });
 });
